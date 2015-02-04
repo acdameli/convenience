@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [[ "$1" == "-h" ]]; then
+  echo "Requires jq and curl installed"
+  echo "assumes guest:guest credentials on RMQ running on localhost:15672"
+fi
+
+curl -sS -u guest:guest localhost:15672/api/queues | jq '.[] | select(.messages_ready > 0) | {"name": .name , "messages": .messages_ready}'
