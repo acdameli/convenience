@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [[ "$1" == "-h" ]]; then
+  echo "assumes jq and curl are installed"
+  echo "assumes RMQ running on localhost:15672 with credentials guest:guest"
+  exit 1
+fi
+
+total=0
+while [[ $# > 0 ]]; do
+    while true; do
+        cleared=$(curl -sS -u guest:guest -XPOST -d '{"encoding": "auto", "requeue": false, "count": 100}' localhost:15672/api/queues/%2F/$1/get | jq '. | length')
+        total=$(($total+$cleared))
+        if [[ $cleared < 100 ]]; then
+            break;
+        fi
+    done
+    shift
+done
+echo "Emptied of $total messages"
