@@ -1,11 +1,12 @@
 #!/bin/bash
 
-if [[ "$1" == "-0h" ]]; then
+if [[ "$1" == "-h" ]]; then
   echo "assumes jq and curl are installed"
   echo "assumed rmq is running on localhost:15672 with credentials guest:guest"
+  echo "assumes everything on rmq uses vhost "/"(%2F)"
   exit 1
 fi
 
 queue_name=$1
 count=${2:-5}
-curl -X POST -sS -d '{"requeue":true, "count": '$count', "encoding": "auto"}' -u guest:guest localhost:15672/api/queues/$(php -r 'echo urlencode("/");')/$queue_name/get | jq '.'
+curl -X POST -sS -d '{"requeue":true, "count": '$count', "encoding": "auto"}' -u guest:guest localhost:15672/api/queues/%2F/$queue_name/get | jq '.'
