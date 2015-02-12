@@ -1,8 +1,9 @@
 #!/bin/bash
 
 if [[ "$1" == "-h" ]]; then
-  echo "assumes jq and curl are installed"
-  echo "assumes RMQ running on localhost:15672 with credentials guest:guest"
+  echo 'assumes jq and curl are installed'
+  echo 'assumes RMQ running on localhost:15672 with credentials guest:guest'
+  echo 'assumes everything runs in vhost "/"(%2F)'
   exit 1
 fi
 
