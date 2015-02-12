@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [[ "$1" == "-h" ]]; then
+  echo "assumes jq and curl are installed"
+  echo "assumed rmq is running on localhost:15672 with credentials guest:guest"
+  echo "assumes the vhost everything is running on is "/"(%2F)"
+  exit 1
+fi
+
+if [[ -z $1 ]]; then
+    for queue in $(curl -sS -u guest:guest localhost:15672/api/queues/%2F | jq -r '.[].name'); do
+        curl -sS -u guest:guest localhost:15672/api/queues/%2F/$(php -r "echo urlencode('$queue');")/bindings | jq '.[] | {"vhost": .vhost, "exchange": .source, "key": .routing_key, "queue": .destination}'
+    done
+else
+    queue=$1
+    curl -sS -u guest:guest localhost:15672/api/queues/%2F/$(php -r "echo urlencode('$queue');")/bindings | jq '.[] | {"vhost": .vhost, "exchange": .source, "key": .routing_key, "queue": .destination}'
+fi
