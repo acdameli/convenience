@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [[ "$1" == "-h" ]] || [[ $# -lt 3 ]]; then
+  echo "usage: $0 exchange routingKey payload"
+  exit 1
+fi
+
+exchange=$1
+routingKey=$2
+data=$3
+
+curl -X POST -sS -d "{\"properties\":{}, \"payload_encoding\": \"string\", \"routing_key\": \"$routingKey\", \"payload\": \"$data\"}" -u guest:guest localhost:15672/api/exchanges/%2F/$exchange/publish
